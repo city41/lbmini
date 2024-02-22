@@ -1,0 +1,24 @@
+[
+  {
+    "patchDescription": "Turns on debug dip 2"
+  },
+  {
+    "type": "prom",
+    "description": "turn on debug dip 2",
+    "address": "1344",
+    "subroutine": true,
+    "patchAsm": [
+      ";;;; redo what we clobbered",
+      "move.b #1, $7daf(a5)",
+
+      "move.w #2, $10ec00",
+      "rts"
+    ]
+  },
+  {
+    "type": "prom",
+    "description": "clean up mess left behind",
+    "address": "134a",
+    "patchAsm": ["nop"]
+  }
+]
