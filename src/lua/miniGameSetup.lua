@@ -6,8 +6,8 @@ debug_dips_address = 0x10ec00
 
 function on_debug_dip_write(offset, data)
 	if offset == debug_dips_address then
-		-- turn on debug dips 1-8
-		return 0xffff
+		-- turn on debug dip 1-8
+		return 0x8000
 	end
 end
 

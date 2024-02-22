@@ -1,0 +1,12 @@
+[
+  {
+    "patchDescription": "Force jump into the mini game"
+  },
+  {
+    "type": "prom",
+    "description": "hail mary",
+    "address": "64cb6",
+    "subroutine": false,
+    "patchAsm": ["move.w #$1a, d0"]
+  }
+]

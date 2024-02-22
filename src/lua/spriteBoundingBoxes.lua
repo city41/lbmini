@@ -239,7 +239,7 @@ function dump_sprite(si)
 end
 
 function on_y(e)
-	dump_sprite(193)
+	dump_sprite(153)
 end
 
 keyboard_events.register_key_event_callback("KEYCODE_Y", on_y)

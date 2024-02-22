@@ -1,0 +1,28 @@
+064CAE: 45F9 0022 8000 lea     $228000.l, A2
+064CB4: 7000           moveq   #$0, D0
+064CB6: 302C 00F0      move.w  ($f0,A4), D0
+064CBA: E188           lsl.l   #8, D0
+064CBC: D5C0           adda.l  D0, A2
+064CBE: 294A 00F4      move.l  A2, ($f4,A4)
+064CC2: 28BC 0006 4CC8 move.l  #$64cc8, (A4)
+064CC8: 48E7 C000      movem.l D0-D1, -(A7)
+064CCC: 303C 0002      move.w  #$2, D0
+064CD0: 4EB9 0004 633C jsr     $4633c.l
+064CD6: 4CDF 0003      movem.l (A7)+, D0-D1
+064CDA: 246C 00F4      movea.l ($f4,A4), A2
+064CDE: 7000           moveq   #$0, D0
+064CE0: 3012           move.w  (A2), D0
+064CE2: E048           lsr.w   #8, D0
+064CE4: 0C00 00FF      cmpi.b  #-$1, D0
+064CE8: 6700 0050      beq     $64d3a
+064CEC: 0C00 0026      cmpi.b  #$26, D0
+064CF0: 661E           bne     $64d10
+064CF2: 322C 013C      move.w  ($13c,A4), D1
+064CF6: 6700 0042      beq     $64d3a
+064CFA: 426C 013C      clr.w   ($13c,A4)
+064CFE: 3941 00F0      move.w  D1, ($f0,A4)
+064D02: 3941 00F2      move.w  D1, ($f2,A4)
+064D06: 246C 013E      movea.l ($13e,A4), A2
+064D0A: 294A 00F4      move.l  A2, ($f4,A4)
+064D0E: 60CE           bra     $64cde
+064D10: 41FA 0034      lea     ($34,PC) ; ($64d46), A0
