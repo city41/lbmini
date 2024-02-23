@@ -14,4 +14,5 @@ export function asmTmpDir(romZipFile: string) {
 }
 
 // TODO: genericize this
-export const PROM_FILE_NAME = "234-p1.p1";
+export const PROM1_FILE_NAME = "234-p1.p1";
+export const PROM2_FILE_NAME = "234-p2.sp2";

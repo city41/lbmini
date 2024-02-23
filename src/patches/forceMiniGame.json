@@ -1,0 +1,18 @@
+[
+  {
+    "patchDescription": "Force jump into the mini game"
+  },
+  {
+    "type": "prom",
+    "description": "Force the game to go to cut 1a instead of the main game cut",
+    "address": "64cb6",
+    "patchAsm": ["move.w #$1a, d0"]
+  },
+  {
+    "type": "prom",
+    "file": "234-p2.sp2",
+    "description": "Set the bytes the mini game is looking for",
+    "address": "229a14",
+    "patchAsm": ["dc.w $151b"]
+  }
+]

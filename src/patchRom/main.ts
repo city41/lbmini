@@ -2,7 +2,13 @@ import path from "node:path";
 import fsp from "node:fs/promises";
 import mkdirp from "mkdirp";
 import { execSync } from "node:child_process";
-import { PROM_FILE_NAME, asmTmpDir, romTmpDir, tmpDir } from "./dirs";
+import {
+  PROM1_FILE_NAME,
+  PROM2_FILE_NAME,
+  asmTmpDir,
+  romTmpDir,
+  tmpDir,
+} from "./dirs";
 import {
   AddressPromPatch,
   CromBuffer,
@@ -34,10 +40,19 @@ function usage() {
   process.exit(1);
 }
 
-async function getProm(zipPath: string): Promise<Buffer> {
+async function getProms(
+  zipPath: string
+): Promise<{ prom1: Buffer; prom2: Buffer }> {
   execSync(`unzip -o ${zipPath} -d ${romTmpDir(zipPath)}`);
 
-  return fsp.readFile(path.resolve(romTmpDir(zipPath), PROM_FILE_NAME));
+  const prom1 = await fsp.readFile(
+    path.resolve(romTmpDir(zipPath), PROM1_FILE_NAME)
+  );
+  const prom2 = await fsp.readFile(
+    path.resolve(romTmpDir(zipPath), PROM2_FILE_NAME)
+  );
+
+  return { prom1, prom2 };
 }
 
 async function getCrom(zipPath: string, cromFile: string): Promise<CromBuffer> {
@@ -159,13 +174,19 @@ function isPatchJSON(obj: unknown): obj is PatchJSON {
 
 async function writePatchedZip(
   romZipFile: string,
-  promData: number[],
+  prom1Data: number[],
+  prom2Data: number[],
   cromBuffers: CromBuffer[],
   outputPath: string
 ): Promise<void> {
   await fsp.writeFile(
-    path.resolve(romTmpDir(romZipFile), PROM_FILE_NAME),
-    new Uint8Array(promData)
+    path.resolve(romTmpDir(romZipFile), PROM1_FILE_NAME),
+    new Uint8Array(prom1Data)
+  );
+
+  await fsp.writeFile(
+    path.resolve(romTmpDir(romZipFile), PROM2_FILE_NAME),
+    new Uint8Array(prom2Data)
   );
 
   for (const cromBuffer of cromBuffers) {
@@ -197,11 +218,17 @@ async function main(romZipFile: string, patchJsonPaths: string[]) {
     await mkdirp(romTmpDir(romZipFile));
     await mkdirp(asmTmpDir(romZipFile));
 
-    const flippedPromBuffer = await getProm(path.resolve(romZipFile));
-    const flippedPromData = Array.from(flippedPromBuffer);
-    const promData = flipBytes(flippedPromData);
+    const { prom1: flippedProm1Buffer, prom2: flippedProm2Buffer } =
+      await getProms(path.resolve(romZipFile));
 
-    let patchedPromData = [...promData];
+    const flippedProm1Data = Array.from(flippedProm1Buffer);
+    const prom1Data = flipBytes(flippedProm1Data);
+
+    const flippedProm2Data = Array.from(flippedProm2Buffer);
+    const prom2Data = flipBytes(flippedProm2Data);
+
+    let patchedProm1Data = [...prom1Data];
+    let patchedProm2Data = [...prom2Data];
 
     let symbolTable: Record<string, number> = {};
 
@@ -239,11 +266,14 @@ async function main(romZipFile: string, patchJsonPaths: string[]) {
             const result = await doPromPatch(
               romZipFile,
               symbolTable,
-              patchedPromData,
+              patchedProm1Data,
+              patchedProm2Data,
               subroutineInsertEnd,
               patch
             );
-            patchedPromData = result.patchedPromData;
+            patchedProm1Data = result.patchedProm1Data;
+            patchedProm2Data = result.patchedProm2Data;
+            // TODO: subroutineInsertEnd only works for prom1
             subroutineInsertEnd = result.subroutineInsertEnd;
             symbolTable = result.symbolTable;
           } else if (patch.type === "crom") {
@@ -286,7 +316,8 @@ async function main(romZipFile: string, patchJsonPaths: string[]) {
       }
     }
 
-    const flippedBackPatch = flipBytes(patchedPromData);
+    const flippedBackProm1Data = flipBytes(patchedProm1Data);
+    const flippedBackProm2Data = flipBytes(patchedProm2Data);
 
     const mameDir = process.env.MAME_ROM_DIR;
 
@@ -295,7 +326,13 @@ async function main(romZipFile: string, patchJsonPaths: string[]) {
     }
 
     const writePath = path.resolve(mameDir, romZipFile);
-    await writePatchedZip(romZipFile, flippedBackPatch, [], writePath);
+    await writePatchedZip(
+      romZipFile,
+      flippedBackProm1Data,
+      flippedBackProm2Data,
+      [],
+      writePath
+    );
 
     console.log("wrote patched rom to", writePath);
   } catch (e) {

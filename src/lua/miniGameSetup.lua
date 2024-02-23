@@ -6,12 +6,22 @@ debug_dips_address = 0x10ec00
 
 function on_debug_dip_write(offset, data)
 	if offset == debug_dips_address then
+		print(string.format("write: %x -- %x", offset, data))
 		-- turn on debug dip 1-8
-		return 0x8000
+		-- return 0x8000
+	end
+end
+
+function on_debug_dip_read(offset, data)
+	if offset == debug_dips_address then
+		print(string.format("read: %x -- %x", offset, data))
+		-- turn on debug dip 1-8
+		-- return 0x8000
 	end
 end
 
 debug_dip_write_handler = mem:install_write_tap(debug_dips_address, debug_dips_address + 1, "write", on_debug_dip_write)
+debug_dip_read_handler = mem:install_read_tap(debug_dips_address, debug_dips_address + 1, "read", on_debug_dip_read)
 
 bank2_address = 0x229a14
 

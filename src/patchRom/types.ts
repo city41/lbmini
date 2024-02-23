@@ -1,39 +1,40 @@
 export type PatchDescription = {
-	patchDescription: string;
+  patchDescription: string;
 };
 
 export type BasePatch = {
-	type: 'crom' | 'prom';
-	description?: string;
-	skip?: boolean;
+  type: "crom" | "prom";
+  description?: string;
+  skip?: boolean;
 };
 
 export type CromPatch = BasePatch & {
-	type: 'crom';
-	imgFile: string;
-	paletteFile: string;
-	destStartingIndex: string;
+  type: "crom";
+  imgFile: string;
+  paletteFile: string;
+  destStartingIndex: string;
 };
 
 export type CromBuffer = {
-	fileName: string;
-	data: number[];
+  fileName: string;
+  data: number[];
 };
 
 export type BasePromPatch = BasePatch & {
-	type: 'prom';
-	symbol?: string;
+  type: "prom";
+  file?: "234-p2.sp2";
+  symbol?: string;
 };
 
 export type AddressPromPatch = BasePromPatch & {
-	address?: string;
-	subroutine?: boolean;
-	patchAsm: string[];
+  address?: string;
+  subroutine?: boolean;
+  patchAsm: string[];
 };
 
 export type StringPromPatch = BasePromPatch & {
-	string: true;
-	value: string;
+  string: true;
+  value: string;
 };
 
 export type Patch = AddressPromPatch | StringPromPatch | CromPatch;

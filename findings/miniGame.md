@@ -96,3 +96,32 @@ a3 100000
 a4 100600
 a5 108000
 a6 3c0000 -- ie reg_vramaddr
+
+# forcing it to work without the debug dip set
+
+It requires debug dip 1-8 (highest bit in 10ec00) to be set to go into the mini game
+
+the debug byte is read at PC (note this is likely one line after the read)
+106a
+
+---
+
+1064 clr.w $10ec00
+
+## 1840
+
+1838 btst #$0, $10ec00
+
+## 18ae
+
+18a6 btst #$0, $10ec00
+
+## 2222
+
+221c btst #$6, $6c00(a5)
+
+## 22be
+
+22b6 btst #$7, $6c00(a5)
+
+2ec0
