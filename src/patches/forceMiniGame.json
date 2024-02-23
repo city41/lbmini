@@ -4,7 +4,7 @@
   },
   {
     "type": "prom",
-    "description": "Force the game to go to cut 1a instead of the main game cut",
+    "description": "Force the game to go to cut 1a instead of the demo cut",
     "address": "64cb6",
     "patchAsm": ["move.w #$1a, d0"]
   },
