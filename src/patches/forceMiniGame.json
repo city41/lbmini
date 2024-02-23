@@ -10,9 +10,50 @@
   },
   {
     "type": "prom",
-    "file": "234-p2.sp2",
     "description": "Set the bytes the mini game is looking for",
-    "address": "229a14",
-    "patchAsm": ["dc.w $151b"]
+    "address": "64cde",
+    "subroutine": true,
+    "patchAsm": [
+      ";;; recreate what we clobbered",
+      "moveq #$0, d0",
+
+      ";;; only do our hack if A2 == 229a14",
+      "move.l a2, d6",
+      "cmpi.l #$229a14, d6",
+      "beq doOurHack",
+      ";;; otherwise, do what it originally did",
+      "move.w (a2), d0",
+      "bra done",
+
+      "doOurHack:",
+      "move.w #$151b, d0",
+
+      "done:",
+      "lsr.w #8, d0",
+      "rts"
+    ]
+  },
+  {
+    "type": "prom",
+    "description": "Set the bytes the mini game is looking for",
+    "address": "65160",
+    "subroutine": true,
+    "patchAsm": [
+      ";;; only do our hack if A2 == 229a14",
+      "move.l a2, d6",
+      "cmpi.l #$229a14, d6",
+      "beq doOurHack",
+      ";;;; recreate what was originally there",
+      "move.w (a2)+, d0",
+      "bra done",
+
+      "doOurHack:",
+      "move.w #$151b, d0",
+      "adda.l #2, a2",
+
+      "done:",
+      "andi.w #$ff, d0",
+      "rts"
+    ]
   }
 ]

@@ -83,7 +83,7 @@ async function addStringToProm(
   data: number[],
   subroutineInsertEnd: number,
   str: string
-): Promise<{ patchedProm1Data: number[]; subroutineInsertEnd: number }> {
+): Promise<{ patchedPromData: number[]; subroutineInsertEnd: number }> {
   const subroutineBytes = await assemble(romZipFile, stringToassembly(str));
   console.log(
     "addStringToProm: subroutinebytes for",
@@ -109,7 +109,7 @@ async function addStringToProm(
   );
 
   return {
-    patchedProm1Data: data,
+    patchedPromData: data,
     subroutineInsertEnd: subroutineStartAddress,
   };
 }
@@ -203,13 +203,11 @@ function applySymbols(
 async function doPromPatch(
   romZipFile: string,
   symbolTable: Record<string, number>,
-  prom1Data: number[],
-  prom2Data: number[],
+  promData: number[],
   subroutineInsertEnd: number,
   patch: Patch
 ): Promise<{
-  patchedProm1Data: number[];
-  patchedProm2Data: number[];
+  patchedPromData: number[];
   subroutineInsertEnd: number;
   symbolTable: Record<string, number>;
 }> {
@@ -221,19 +219,17 @@ async function doPromPatch(
   console.log(patch.description ?? "(patch has no description)");
 
   let result: {
-    patchedProm1Data: number[];
-    patchedProm2Data: number[];
+    patchedPromData: number[];
     subroutineInsertEnd: number;
   } = {
-    patchedProm1Data: prom1Data,
-    patchedProm2Data: prom2Data,
+    patchedPromData: promData,
     subroutineInsertEnd,
   };
 
   if (isStringPatch(patch)) {
     const stringResult = await addStringToProm(
       romZipFile,
-      prom1Data,
+      promData,
       subroutineInsertEnd,
       patch.value
     );
@@ -245,7 +241,7 @@ async function doPromPatch(
     patch = applySymbols(symbolTable, patch);
     const subroutineResult = await replaceWithSubroutine(
       romZipFile,
-      prom1Data,
+      promData,
       subroutineInsertEnd,
       patch
     );
@@ -262,19 +258,11 @@ async function doPromPatch(
     }
     patch = applySymbols(symbolTable, patch);
 
-    if (patch.file === "234-p2.sp2") {
-      result = {
-        ...result,
-        patchedProm2Data: await replace(romZipFile, prom2Data, patch),
-        subroutineInsertEnd,
-      };
-    } else {
-      result = {
-        ...result,
-        patchedProm1Data: await replace(romZipFile, prom1Data, patch),
-        subroutineInsertEnd,
-      };
-    }
+    result = {
+      ...result,
+      patchedPromData: await replace(romZipFile, promData, patch),
+      subroutineInsertEnd,
+    };
   }
 
   if (patch.symbol) {
