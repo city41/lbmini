@@ -1,5 +1,7 @@
 # Last Blade Hidden Mini Game Hack
 
+![screenshot](https://github.com/city41/lbmini/blob/main/screenshot.png?raw=true)
+
 Last Blade has a hidden mini game inside of it. But getting to it is pretty difficult and error prone.
 
 This repo creates a patch that takes you straight to the mini game right when the game boots up (after the eyecatcher).
