@@ -34,7 +34,6 @@ Instead of the demo starting, the mini game will
 
 ## How to play the mini game
 
-- Button A: will exit the mini game back to the cut editor if you don't use the ROM hack
 - Button B: kick a life saver
 - Button D: reset the level
 
