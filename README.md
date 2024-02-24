@@ -22,7 +22,7 @@ mame -autoboot_script miniGameHack.lua lastblad
 You might want to add some more flags to make MAME a bit nicer
 
 ```sh
-mame -w -nofilter -nomouse -autoboot_script miniGameSetup.lua lastblad
+mame -w -nofilter -nomouse -autoboot_script miniGameHack.lua lastblad
 ```
 
 Now wait for the demo to start
