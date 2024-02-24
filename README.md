@@ -6,6 +6,8 @@ Last Blade has a hidden mini game inside of it. But getting to it is pretty diff
 
 This repo creates a patch that takes you straight to the mini game right when the game boots up (after the eyecatcher).
 
+I made a [video](https://www.youtube.com/watch?v=AdHPz36y-SU) on the mini game and hack too.
+
 ## How to use a MAME Lua script to see the mini game
 
 If you don't want to bother with hacking the ROM, you can use MAME and a Lua script to see it. This script
