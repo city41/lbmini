@@ -8,7 +8,7 @@
     "restore": "cp lastblad.zip $MAME_ROM_DIR",
     "type-check": "yarn tsc --noemit",
     "to-neosd": "bash scripts/toneosd.sh",
-    "mame": "mame -w -nofilter -nomouse lastblad"
+    "mame": "mame -w -nofilter -nomouse aes lastblad"
   },
   "dependencies": {
     "@city41/sromcrom": "^0.14.2",

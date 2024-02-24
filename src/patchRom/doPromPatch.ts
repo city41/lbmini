@@ -10,6 +10,10 @@ function hexDump(bytes: number[]): string {
   return bytes.map((b) => b.toString(16)).join(" ");
 }
 
+function luaDump(addr: number, val: number) {
+  console.log(`[0x${addr.toString(16)}] = 0x${val.toString(16)},`);
+}
+
 async function assemble(romZipFile: string, asm: string[]): Promise<number[]> {
   await mkdirp(asmTmpDir(romZipFile));
   const inputAsmPath = path.resolve(asmTmpDir(romZipFile), "tmp.asm");
@@ -37,7 +41,7 @@ async function replaceAt(
   data: number[],
   address: string,
   asm: string[]
-): Promise<number[]> {
+): Promise<{ data: number[]; asmBytes: number[] }> {
   const asmBytes = await assemble(romZipFile, asm);
 
   console.log("replaceAt: asmBytes", hexDump(asmBytes));
@@ -45,7 +49,7 @@ async function replaceAt(
   const index = parseInt(address, 16);
   data.splice(index, asmBytes.length, ...asmBytes);
 
-  return data;
+  return { data, asmBytes };
 }
 
 function formJsrAsm(numBytesToReplace: number, jsrAddress: number): string[] {
@@ -138,7 +142,19 @@ async function replaceWithSubroutine(
 
   if ("address" in patch && typeof patch.address === "string") {
     jsrAsm = await formJsrAsm(6, subroutineStartAddress);
-    jsrAddedData = await replaceAt(romZipFile, data, patch.address, jsrAsm);
+    const { data: newlyPatchedData, asmBytes } = await replaceAt(
+      romZipFile,
+      data,
+      patch.address,
+      jsrAsm
+    );
+    jsrAddedData = newlyPatchedData;
+
+    const address = parseInt(patch.address, 16);
+
+    for (let i = 0; i < asmBytes.length; ++i) {
+      luaDump(address + i, asmBytes[i]);
+    }
   } else {
     console.log(
       "subroutine has no address for jsr specified, just inserting it into rom"
@@ -152,11 +168,16 @@ async function replaceWithSubroutine(
       16
     )}`
   );
+
   jsrAddedData.splice(
     subroutineStartAddress,
     subroutineBytes.length,
     ...subroutineBytes
   );
+
+  for (let i = 0; i < subroutineBytes.length; ++i) {
+    luaDump(subroutineStartAddress + i, subroutineBytes[i]);
+  }
 
   return {
     patchedPromData: jsrAddedData,
@@ -173,7 +194,20 @@ async function replace(
     if (typeof patch.address !== "string") {
       throw new Error("replace: a non subroutine patch requires an address");
     }
-    return replaceAt(romZipFile, data, patch.address, patch.patchAsm);
+    const result = await replaceAt(
+      romZipFile,
+      data,
+      patch.address,
+      patch.patchAsm
+    );
+
+    const address = parseInt(patch.address, 16);
+
+    for (let i = 0; i < result.asmBytes.length; ++i) {
+      luaDump(address + i, result.asmBytes[i]);
+    }
+
+    return result.data;
   } else {
     throw new Error(`replace, unexpected patch: ${JSON.stringify(patch)}`);
   }

@@ -1,6 +1,6 @@
 cpu = manager.machine.devices[":maincpu"]
 mem = cpu.spaces["program"]
-screen = manager.machine.screens[":screen"]
+rom_mem = manager.machine.memory.regions[":cslot1:maincpu"]
 
 debug_dips_address = 0x10ec00
 

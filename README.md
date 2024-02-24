@@ -6,14 +6,15 @@ This repo creates a patch that takes you straight to the mini game right when th
 
 ## How to use a MAME Lua script to see the mini game
 
-If you don't want to bother with hacking the ROM, you can use MAME and a Lua script to see it.
+If you don't want to bother with hacking the ROM, you can use MAME and a Lua script to see it. This script
+does the same thing as the hack.
 
-Download [miniGameSetup.lua](https://raw.githubusercontent.com/city41/lbmini/main/src/lua/miniGameSetup.lua)
+Download [miniGameHack.lua](https://raw.githubusercontent.com/city41/lbmini/main/src/lua/miniGameHack.lua)
 
 Then launch MAME from the command line
 
 ```sh
-mame -autoboot_script miniGameSetup.lua lastblad
+mame -autoboot_script miniGameHack.lua lastblad
 ```
 
 You might want to add some more flags to make MAME a bit nicer
@@ -22,13 +23,12 @@ You might want to add some more flags to make MAME a bit nicer
 mame -w -nofilter -nomouse -autoboot_script miniGameSetup.lua lastblad
 ```
 
-Once the game starts, during the eyecatcher, hold down D
+Now wait for the demo to start
 
-Once the demo tool launches, go to cut editor
+- MVS: wait through the eyecatcher
+- AES: press start during the eyecatcher, or just wait
 
-Then press A until you arrive at cut 1A
-
-Now go to "Play Back" and press A
+Instead of the demo starting, the mini game will
 
 ## How to play the mini game
 
